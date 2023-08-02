@@ -42,7 +42,7 @@ export class PinRenderer {
 		const output = [sectionHeading];
 		output.push(...pins.map(this.renderPin));
 
-		return output.join("\n")
+		return output.join("\n\n")
 
 	}
 
