@@ -73,7 +73,8 @@ export async function updateSection(
       return;
     } else {
       const pos = { line: fileLines.length - 1, ch: 0 };
-      editor.replaceRange(`\n\n${sectionContents}`, pos, pos);
+      const lineBreaks = fileLines[fileLines.length - 1].trim().length ? "\n\n" : "\n"
+      editor.replaceRange(`${lineBreaks}${sectionContents}\n`, pos, pos);
       return;
     }
   }
@@ -83,14 +84,21 @@ export async function updateSection(
     // Section already exists, just replace
     const prefix = fileLines.slice(0, logbookSectionLineNum);
     const suffix =
-      nextSectionLineNum !== -1 ? fileLines.slice(nextSectionLineNum) : [];
+      nextSectionLineNum !== -1 ? fileLines.slice(nextSectionLineNum - 1) : [];
 
     return vault.modify(
       file,
-      [...prefix, sectionContents, ...suffix].join("\n")
+      [...prefix, sectionContents, ...suffix, ""].join("\n")
     );
   } else {
     // Section does not exist, append to end of file.
-    return vault.modify(file, [...fileLines, "", sectionContents].join("\n"));
+    const lastLine = fileLines[fileLines.length - 1]
+    const content = fileLines
+    // if the last line is not empty, add a linebreak
+    if (lastLine.trim().length !== 0) content.push("")
+    content.push(sectionContents)
+    content.push("")
+
+    return vault.modify(file, content.join("\n"));
   }
 }
