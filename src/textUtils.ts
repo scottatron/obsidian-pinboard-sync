@@ -69,7 +69,7 @@ export async function updateSection(
           ? { line: nextSectionLineNum - 1, ch: 0 }
           : { line: fileLines.length, ch: 0 };
 
-        editor.replaceRange(`${sectionContents}\n`, from, to);
+      editor.replaceRange(`${sectionContents}\n`, from, to);
       return;
     } else {
       const pos = { line: fileLines.length - 1, ch: 0 };
@@ -86,9 +86,14 @@ export async function updateSection(
     const suffix =
       nextSectionLineNum !== -1 ? fileLines.slice(nextSectionLineNum - 1) : [];
 
+    const content = [...prefix, sectionContents, ...suffix]
+
+    // if the suffix does not end with a newline, add one
+    if (content[content.length - 1].trim().length !== 0) content.push("")
+
     return vault.modify(
       file,
-      [...prefix, sectionContents, ...suffix, ""].join("\n")
+      content.join("\n")
     );
   } else {
     // Section does not exist, append to end of file.
