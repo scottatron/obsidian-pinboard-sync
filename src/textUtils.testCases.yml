@@ -1,0 +1,757 @@
+- test: file is open, section does not already exist, trailing newline
+  editor: appendEditor
+  existingContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+  heading: "## Pinboard"
+  sectionContent: |-
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+  expectedContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+- test: file is open, section does not already exist, no trailing newline
+  editor: appendEditor
+  existingContent: |-
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+  heading: "## Pinboard"
+  sectionContent: |-
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+  expectedContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+- test: file is open, section already exists, no new links, trailing newline
+  editor: sliceEditor
+  existingContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+  heading: "## Pinboard"
+  sectionContent: |-
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+  expectedContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+- test: file is open, section already exists, no new links, no trailing newline
+  editor: sliceEditor
+  existingContent: |-
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+  heading: "## Pinboard"
+  sectionContent: |-
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+  expectedContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+- test: file is open, section already exists, no new links, section below, trailing newline
+  editor: sliceEditor
+  existingContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    ## Another Section
+
+    lorem ipsum
+  heading: "## Pinboard"
+  sectionContent: |-
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+  expectedContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    ## Another Section
+
+    lorem ipsum
+- test: file is open, section already exists, no new links, section below, no trailing newline
+  editor: sliceEditor
+  existingContent: |-
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    ## Another Section
+
+    lorem ipsum
+  heading: "## Pinboard"
+  sectionContent: |-
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+  expectedContent: |-
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    ## Another Section
+
+    lorem ipsum
+- test: file is open, section already exists, new links, trailing newline
+  editor: sliceEditor
+  existingContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+  heading: "## Pinboard"
+  sectionContent: |-
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    [Link 3](https://example.com)
+  expectedContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    [Link 3](https://example.com)
+- test: file is open, section already exists, new links, section below, trailing newline
+  editor: sliceEditor
+  existingContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    ## Another Section
+
+    lorem ipsum
+  heading: "## Pinboard"
+  sectionContent: |-
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    [Link 3](https://example.com)
+  expectedContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    [Link 3](https://example.com)
+
+    ## Another Section
+
+    lorem ipsum
+- test: file is open, section already exists, new links, section below, no trailing newline
+  editor: sliceEditor
+  existingContent: |-
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    ## Another Section
+
+    lorem ipsum
+  heading: "## Pinboard"
+  sectionContent: |-
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    [Link 3](https://example.com)
+  expectedContent: |-
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    [Link 3](https://example.com)
+
+    ## Another Section
+
+    lorem ipsum
+- test: file is not open, section does not already exist, trailing newline
+  existingContent: |+
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+  heading: "## Pinboard"
+  sectionContent: |-
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+  expectedContent: |+
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+- test: file is not open, section does not already exist, no trailing newline
+  existingContent: |-
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+  heading: "## Pinboard"
+  sectionContent: |-
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+  expectedContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+- test: file is not open, section already exists, no new links, trailing newline
+  existingContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+  heading: "## Pinboard"
+  sectionContent: |-
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+  expectedContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+- test: file is not open, section already exists, no new links, no trailing newline
+  existingContent: |-
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+  heading: "## Pinboard"
+  sectionContent: |-
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+  expectedContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+- test: file is not open, section already exists, new links, trailing newline
+  existingContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+  heading: "## Pinboard"
+  sectionContent: |-
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    [Link 3](https://example.com)
+  expectedContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    [Link 3](https://example.com)
+- test: file is not open, section already exists, no new links, section below, trailing newline
+  existingContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    ## Another Section
+
+    lorem ipsum
+  heading: "## Pinboard"
+  sectionContent: |-
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+  expectedContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    ## Another Section
+
+    lorem ipsum
+- test: file is not open, section already exists, no new links, section below, no trailing newline
+  existingContent: |-
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    ## Another Section
+
+    lorem ipsum
+  heading: "## Pinboard"
+  sectionContent: |-
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+  expectedContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    ## Another Section
+
+    lorem ipsum
+- test: file is not open, section already exists, new links, section below, trailing newline
+  existingContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    ## Another Section
+
+    lorem ipsum
+  heading: "## Pinboard"
+  sectionContent: |-
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    [Link 3](https://example.com)
+  expectedContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    [Link 3](https://example.com)
+
+    ## Another Section
+
+    lorem ipsum
+- test: file is not open, section already exists, new links, section below, no trailing newline
+  existingContent: |-
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    ## Another Section
+
+    lorem ipsum
+  heading: "## Pinboard"
+  sectionContent: |-
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    [Link 3](https://example.com)
+  expectedContent: |
+    [[Thursday]]
+
+    - y:
+      - foo
+    - t:
+      - bar
+    - b:
+      - none
+
+    ## Pinboard
+
+    [Link 1](https://example.com)
+
+    [Link 2](https://example.com)
+
+    [Link 3](https://example.com)
+
+    ## Another Section
+
+    lorem ipsum

@@ -1,391 +1,17 @@
-import * as yaml from "js-yaml";
-import { App, TFile } from "obsidian";
-import { updateSection } from "./textUtils";
-
-const testCases = `
-- test: file is not open, section does not already exist, trailing newline
-  existingContent: |+
-    [[Thursday]]
-
-    - y:
-      - foo
-    - t:
-      - bar
-    - b:
-      - none
-  heading: "## Pinboard"
-  sectionContent: |-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-  expectedContent: |+
-    [[Thursday]]
-
-    - y:
-      - foo
-    - t:
-      - bar
-    - b:
-      - none
-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-- test: file is not open, section does not already exist, no trailing newline
-  existingContent: |-
-    [[Thursday]]
-
-    - y:
-      - foo
-    - t:
-      - bar
-    - b:
-      - none
-  heading: "## Pinboard"
-  sectionContent: |-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-  expectedContent: |
-    [[Thursday]]
-
-    - y:
-      - foo
-    - t:
-      - bar
-    - b:
-      - none
-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-- test: file is not open, section already exists, no new links, trailing newline
-  existingContent: |
-    [[Thursday]]
-
-    - y:
-      - foo
-    - t:
-      - bar
-    - b:
-      - none
-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-  heading: "## Pinboard"
-  sectionContent: |-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-  expectedContent: |
-    [[Thursday]]
-
-    - y:
-      - foo
-    - t:
-      - bar
-    - b:
-      - none
-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-- test: file is not open, section already exists, no new links, no trailing newline
-  existingContent: |-
-    [[Thursday]]
-
-    - y:
-      - foo
-    - t:
-      - bar
-    - b:
-      - none
-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-  heading: "## Pinboard"
-  sectionContent: |-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-  expectedContent: |
-    [[Thursday]]
-
-    - y:
-      - foo
-    - t:
-      - bar
-    - b:
-      - none
-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-- test: file is not open, section already exists, new links, trailing newline
-  existingContent: |
-    [[Thursday]]
-
-    - y:
-      - foo
-    - t:
-      - bar
-    - b:
-      - none
-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-  heading: "## Pinboard"
-  sectionContent: |-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-
-    [Link 3](https://example.com)
-  expectedContent: |
-    [[Thursday]]
-
-    - y:
-      - foo
-    - t:
-      - bar
-    - b:
-      - none
-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-
-    [Link 3](https://example.com)
-- test: file is not open, section already exists, no new links, section below, trailing newline
-  existingContent: |
-    [[Thursday]]
-
-    - y:
-      - foo
-    - t:
-      - bar
-    - b:
-      - none
-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-
-    ## Another Section
-
-    lorem ipsum
-  heading: "## Pinboard"
-  sectionContent: |-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-  expectedContent: |
-    [[Thursday]]
-
-    - y:
-      - foo
-    - t:
-      - bar
-    - b:
-      - none
-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-
-    ## Another Section
-
-    lorem ipsum
-- test: file is not open, section already exists, no new links, section below, no trailing newline
-  existingContent: |-
-    [[Thursday]]
-
-    - y:
-      - foo
-    - t:
-      - bar
-    - b:
-      - none
-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-
-    ## Another Section
-
-    lorem ipsum
-  heading: "## Pinboard"
-  sectionContent: |-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-  expectedContent: |
-    [[Thursday]]
-
-    - y:
-      - foo
-    - t:
-      - bar
-    - b:
-      - none
-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-
-    ## Another Section
-
-    lorem ipsum
-- test: file is not open, section already exists, new links, section below, trailing newline
-  existingContent: |
-    [[Thursday]]
-
-    - y:
-      - foo
-    - t:
-      - bar
-    - b:
-      - none
-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-
-    ## Another Section
-
-    lorem ipsum
-  heading: "## Pinboard"
-  sectionContent: |-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-
-    [Link 3](https://example.com)
-  expectedContent: |
-    [[Thursday]]
-
-    - y:
-      - foo
-    - t:
-      - bar
-    - b:
-      - none
-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-
-    [Link 3](https://example.com)
-
-    ## Another Section
-
-    lorem ipsum
-- test: file is not open, section already exists, new links, section below, no trailing newline
-  existingContent: |-
-    [[Thursday]]
-
-    - y:
-      - foo
-    - t:
-      - bar
-    - b:
-      - none
-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-
-    ## Another Section
-
-    lorem ipsum
-  heading: "## Pinboard"
-  sectionContent: |-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-
-    [Link 3](https://example.com)
-  expectedContent: |
-    [[Thursday]]
-
-    - y:
-      - foo
-    - t:
-      - bar
-    - b:
-      - none
-
-    ## Pinboard
-
-    [Link 1](https://example.com)
-
-    [Link 2](https://example.com)
-
-    [Link 3](https://example.com)
-
-    ## Another Section
-
-    lorem ipsum
-`
-
-const parsedTestCases = yaml.load(testCases);
-
 jest.mock('./fileUtils', () => ({
-  getEditorForFile: jest.fn()
+  getEditorForFile: jest.fn(),
 }));
 
-let modifiedContent: string
+import * as fs from 'fs';
+import * as yaml from "js-yaml";
+import { App, Editor, TFile } from "obsidian";
+import * as fileUtils from './fileUtils';
+import { updateSection } from "./textUtils";
+
+const testCases = yaml.load(fs.readFileSync('src/textUtils.testCases.yml')) as any[];
+
+let existingContent: string;
+let modifiedContent: string;
 
 const mockFile: TFile = {
 } as unknown as TFile;
@@ -396,25 +22,43 @@ const mockApp: App = {
       modifiedContent = contents;
     })
   },
+  workspace: {
+  }
 } as unknown as App;
 
+const appendEditor: Editor = {
+  replaceRange: jest.fn().mockImplementation((text, from, to) => {
+    modifiedContent = [existingContent, text].join("")
+  })
+} as unknown as Editor;
+const sliceEditor: Editor = {
+  replaceRange: jest.fn().mockImplementation((text, from, to) => {
+    const lines = existingContent.split("\n")
+    const prefix = lines.slice(0, from.line).join("\n") + "\n"
+    const suffix = lines.slice(to.line).join("\n")
+    modifiedContent = prefix + text + suffix
+  })
+} as unknown as Editor;
+const mockEditors = { appendEditor, sliceEditor }
 
 describe("updateSection", () => {
-  parsedTestCases.forEach((testCase: any) => {
-    if (!testCase.existingContent) return
+  testCases.forEach((testCase: any) => {
+    if (!testCase.existingContent) {
+      it.todo(testCase.test);
+      return
+    }
     it(testCase.test, async () => {
-      // Arrange
+      existingContent = testCase.existingContent;
       modifiedContent = '';
+
+      (fileUtils.getEditorForFile as jest.Mock).mockImplementation((app: App, file: TFile) => testCase.editor ? mockEditors[testCase.editor] : null)
 
       mockApp.vault.read = jest.fn().mockResolvedValue(testCase.existingContent);
 
-      // Act
       await updateSection(mockApp, mockFile, testCase.heading, testCase.sectionContent);
 
-      // Assert
       expect(modifiedContent).toMatch(testCase.expectedContent);
       // assert that there is only a single newline at the end of the modified content
-      // expect(modifiedContent.endsWith('\n')).toBe(true);
       expect(modifiedContent.endsWith("\n\n")).toBe(false);
     });
   })
